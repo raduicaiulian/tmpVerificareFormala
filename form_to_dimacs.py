@@ -3,16 +3,17 @@ def expand(formula):
     output_formula = ""
     while(formula):
         if "and(" in formula or "or(" in formula: # parse input formula to a stack of loops
-            if "and(" in formula:
-                and_index = formula.index("and(") + 4
-            else:
-                and_index = len(formula)
-
-            if "or(" in formula:
-                or_index = formula.index("or(") + 3
-            else:
-                or_index = len(formula)
-
+            # if "and(" in formula:
+            #     and_index = formula.index("and(") + 4
+            # else:
+            #     and_index = len(formula)
+            and_index = formula.index("and(") + 4 if "and(" in formula else len(formula)
+            # if "or(" in formula:
+            #     or_index = formula.index("or(") + 3
+            # else:
+            #     or_index = len(formula)
+            or_index = formula.index("or(") + 3 if "or(" in formula else len(formula)
+            
             if or_index == len(formula) and and_index == len(formula):
                 continue
             #if or_index < and_index:
