@@ -123,7 +123,7 @@ def convert_to_dimacs(formulas):
                     if content_of_not.count("(") != content_of_not.count(")"):
                         print("Problem")
                     print(content_of_not)
-                    breakpoint()
+                    # breakpoint()
                     dimacs_map[content_of_not] = number
                     dimacs_formula += str(- number) + " "
                 else:
@@ -132,7 +132,7 @@ def convert_to_dimacs(formulas):
             dimacs_formula += "0\n"
             number_of_clauses += 1
     numbe_of_literals = max(dimacs_map.values())
-    breakpoint()
+    # breakpoint()
     print("numbe_of_literals", numbe_of_literals,"number_of_clauses", number_of_clauses)
     dimacs_formula = f"p cnf {numbe_of_literals} {number_of_clauses}\n" + dimacs_formula
     #write dimacs formula to file
