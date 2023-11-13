@@ -69,10 +69,16 @@ def expand(file_name, formula):
                 if loop == loop_stack[-1]:
                     # breakpoint()
                     # dinamic_for_loop += tmp_formula[:-1] + ") " + "\""
-                    dinamic_for_loop += tmp_formula + ") " + "\""
+                    # dinamic_for_loop += tmp_formula + ") " + "\""
+                    # fixed extra paranthesis at the end
+                    dinamic_for_loop += tmp_formula + " \""
                     dinamic_for_loop += "\n" + "\t" * (number_of_tabs - 1)
                     dinamic_for_loop += f"op = '{loop_element[3]}'\n"
             dinamic_for_loop += 'out = out[out.index(" ")+1:]'
+            # for debugging
+            # dinamic_for_loop += '\nprint("---", out, "---")'
+            # dinamic_for_loop += '\nbreakpoint()'
+            
 
             # for debugging
             # dinamic_for_loop += '\nprint("----------out------------")\n'
@@ -90,7 +96,8 @@ def expand(file_name, formula):
 def get_number(dict, number, literal):
     if literal not in dict.keys():
         return number + 1
-    return number
+    print("cache hit")
+    return dict[literal]
 def convert_to_dimacs(formulas):
     # read formulas from text files
     formulas_str = []
@@ -98,7 +105,7 @@ def convert_to_dimacs(formulas):
     dimacs_formula = ""
     number_of_clauses = 0
     for file_name in formulas:
-        with open(file_name,"r") as file:
+        with open(file_name, "r") as file:
             formula = file.read()
             formulas_str.append(formula)
     
@@ -110,8 +117,6 @@ def convert_to_dimacs(formulas):
 
             disjunctions = i.split("or")
             # print(disjunctions)
-            
-
             for literal in disjunctions:                
                 # literal = literal.strip()
                 number = get_number(dimacs_map, number, literal)
@@ -121,9 +126,11 @@ def convert_to_dimacs(formulas):
                     content_of_not = literal[literal.index("not(")+4:literal.rindex(")")-1] if literal.count(")") == (literal.count("(") + 1) else literal[literal.index("not(")+4:literal.rindex(")")]#I know it is not a good practice to hardcode the indexes, but for now it should work
                     # sanity test
                     if content_of_not.count("(") != content_of_not.count(")"):
-                        print("Problem")
-                    print(content_of_not)
-                    # breakpoint()
+                        print("Problem with content_of_not")
+                    if literal.count("(") != literal.count(")"):
+                        print("Problem with literal")
+                    print("content_of_not", content_of_not)
+                    breakpoint()
                     dimacs_map[content_of_not] = number
                     dimacs_formula += str(- number) + " "
                 else:
@@ -146,11 +153,11 @@ def convert_to_dimacs(formulas):
 expand("f1", "and(x,1,9) and(y,1,9) or(z,1,9) S(x,y,z)")
 # Each number appears at most once in each row
 expand("f2", "and(y,1,9) and(z,1,9) and(x,1,8) and(i,x-1,9) (not(S(x,y,z)) or not(S(i,y,z)))")
-# Each number appears at most once in each column
+# # Each number appears at most once in each column
 expand("f3", "and(x,1,9) and(z,1,9) and(y,1,8) and(i,y-1,9) (not(S(x,y,z)) or not(S(i,y,z)))")
-#Each number appears at most once in each 3x3 sub-grid
+# #Each number appears at most once in each 3x3 sub-grid
 expand("f4", "and(z,1,9) and(i,0,2) and(j,0,2) and(x,1,3) and(y,1,3) and(k,y+1,3) (not(S(3*i+x,3*j+y,z)) or not(S(3*i+x,3*j+k,z)))")
 expand("f5", "and(z,1,9) and(i,0,2) and(j,0,2) and(x,1,3) and(y,1,3) and(k,x+1,3) and(l,1,3) (not(S(3*i+x,3*j+y,z)) or not(S(3*i+k,3*j+l,z)))")
 
+# convert_to_dimacs(["f1"])
 convert_to_dimacs(["f1", "f2", "f3", "f4", "f5"])
-
